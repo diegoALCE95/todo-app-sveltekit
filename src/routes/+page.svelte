@@ -1,8 +1,25 @@
 <script>
   import removeIcon from '$lib/assets/remove.svg';
+  import { onMount } from 'svelte';
+
   let todoList = $state([]);
 
   let uid = todoList.length + 1;
+
+  if (typeof localStorage !== 'undefined') {
+    onMount(() => {
+      const raw = localStorage.getItem('todos');
+      if (raw) {
+        try { 
+          todoList.splice(0, todoList.length, ...JSON.parse(raw)); 
+        } catch {}
+      }
+    });
+  
+    $effect(() => {
+      localStorage.setItem('todos', JSON.stringify(todoList));
+    });
+  }
 
   function remove(todo) {
 		const index = todoList.indexOf(todo);
